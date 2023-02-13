@@ -1,6 +1,6 @@
 from aiogram.types import Message
-from aiogram.utils.exceptions import BotBlocked
-from sqlalchemy import select
+from aiogram.utils.exceptions import BotBlocked, BadRequest
+from sqlalchemy import select, delete
 
 from models import *
 
@@ -15,5 +15,7 @@ async def admin_handler(message: Message):
             except BotBlocked:
                 user.alive = False
                 session.add(user)
+            except BadRequest:
+                await session.execute(delete(User).filter_by(user_id=user.user_id))
 
         await session.commit()
