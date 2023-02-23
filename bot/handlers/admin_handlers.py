@@ -1,5 +1,7 @@
+import asyncio
+
 from aiogram.types import Message
-from aiogram.utils.exceptions import BotBlocked, BadRequest
+from aiogram.utils.exceptions import BadRequest, Unauthorized
 from sqlalchemy import select, delete
 
 from models import *
@@ -12,10 +14,6 @@ async def admin_handler(message: Message):
         for user in users:
             try:
                 await message.send_copy(user.user_id)
-            except BotBlocked:
-                user.alive = False
-                session.add(user)
-            except BadRequest:
+                await asyncio.sleep(0.5)
+            except (Unauthorized, BadRequest):
                 await session.execute(delete(User).filter_by(user_id=user.user_id))
-
-        await session.commit()
