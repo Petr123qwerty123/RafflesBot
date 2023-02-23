@@ -18,8 +18,8 @@ class CurrentRaffleMiddleware(LifetimeControllerMiddleware):
                     select(Raffle).
                     filter(
                         and_(
-                            func.date(inspect(Raffle).c.start_datetime) <= now,
-                            func.date(inspect(Raffle).c.end_datetime) >= now
+                            inspect(Raffle).c.start_datetime <= now,
+                            inspect(Raffle).c.end_datetime >= now
                         )
                     )
                 )
